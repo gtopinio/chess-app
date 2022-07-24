@@ -18,5 +18,7 @@ public class Main extends Application{
 
     public void start(Stage stage){
         // Starting the Chess App
+        GameBoardStage chessboard = new GameBoardStage();
+        chessboard.setStage(stage);
 	}
 }
