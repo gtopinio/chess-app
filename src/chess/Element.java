@@ -31,19 +31,21 @@ public class Element {
     public final static Image W_KNIGHT_IMAGE = new Image("images/white_knight.png",GameBoardStage.CELL_WIDTH,GameBoardStage.CELL_WIDTH,false,false);
     public final static Image W_PAWN_IMAGE = new Image("images/white_pawn.png",GameBoardStage.CELL_WIDTH,GameBoardStage.CELL_WIDTH,false,false);
 
-    public final static String B_KING_TYPE = "b_king";
-    public final static String B_QUEEN_TYPE = "b_queen";
-    public final static String B_ROOK_TYPE = "b_rook";
-    public final static String B_BISHOP_TYPE = "b_bishop";
-    public final static String B_KNIGHT_TYPE = "b_knight";
-    public final static String B_PAWN_TYPE = "b_pawn";
+    public final static String B_KING_TYPE = "BK";
+    public final static String B_QUEEN_TYPE = "BQ";
+    public final static String B_ROOK_TYPE = "BR";
+    public final static String B_BISHOP_TYPE = "BB";
+    public final static String B_KNIGHT_TYPE = "BN";
+    public final static String B_PAWN_TYPE = "BP";
 
-    public final static String W_KING_TYPE = "w_king";
-    public final static String W_QUEEN_TYPE = "w_queen";
-    public final static String W_ROOK_TYPE = "w_rook";
-    public final static String W_BISHOP_TYPE = "w_bishop";
-    public final static String W_KNIGHT_TYPE = "w_knight";
-    public final static String W_PAWN_TYPE = "w_pawn";
+    public final static String W_KING_TYPE = "WK";
+    public final static String W_QUEEN_TYPE = "WQ";
+    public final static String W_ROOK_TYPE = "WR";
+    public final static String W_BISHOP_TYPE = "WB";
+    public final static String W_KNIGHT_TYPE = "WN";
+    public final static String W_PAWN_TYPE = "WP";
+
+	public final static String CLEARED_TYPE = "00";
 
 	public Element(String type, GameBoardStage gameStage) { // Note: an ELEMENT has an imgView (to set up an Image)
 		this.type = type;
