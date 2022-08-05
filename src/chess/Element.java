@@ -15,6 +15,8 @@ public class Element {
     // The images are stored as constant values
     public final static int IMAGE_SIZE = 60;
 
+	public final static Image NULL_IMAGE = new Image("images/null_image.png",GameBoardStage.CELL_WIDTH,GameBoardStage.CELL_WIDTH,false,false);
+
     //Black Chess Pieces
     public final static Image B_KING_IMAGE = new Image("images/black_king.png",GameBoardStage.CELL_WIDTH,GameBoardStage.CELL_WIDTH,false,false);
     public final static Image B_QUEEN_IMAGE = new Image("images/black_queen.png",GameBoardStage.CELL_WIDTH,GameBoardStage.CELL_WIDTH,false,false);
@@ -69,7 +71,7 @@ public class Element {
 
 		}
 
-		// this.setImageView();
+		this.setImageView();
 		// this.setMouseHandler();
 	}
 

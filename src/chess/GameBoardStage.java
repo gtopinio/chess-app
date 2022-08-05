@@ -20,7 +20,7 @@ public class GameBoardStage {
 
 	private GridPane map;
 	private String[][] gameBoard;
-	// private ArrayList<Element> pieceCells;
+	private ArrayList<Element> pieceCells;
 
 	// GUI and GridPane Size Specifications
     public final static int MAX_CELLS = 64;
@@ -28,8 +28,8 @@ public class GameBoardStage {
 	public final static int MAP_NUM_COLS = 8;
 	public final static int MAP_WIDTH = 700;
 	public final static int MAP_HEIGHT = 700;
-	public final static int CELL_WIDTH = 65;
-	public final static int CELL_HEIGHT = 65;
+	public final static int CELL_WIDTH = 60;
+	public final static int CELL_HEIGHT = 70;
     public final static int WINDOW_WIDTH = 600;
 	public final static int WINDOW_HEIGHT = 600;
 
@@ -48,7 +48,7 @@ public class GameBoardStage {
 		this.gc = canvas.getGraphicsContext2D();
 
 		this.map = new GridPane(); // Main layout for the game
-		// this.pieceCells = new ArrayList<Element>(); //List to hold the pattern of the Grid Pane
+		this.pieceCells = new ArrayList<Element>(); //List to hold the pattern of the Grid Pane
 		this.gameBoard = new String[GameBoardStage.MAP_NUM_ROWS][GameBoardStage.MAP_NUM_COLS];
 	}
 
@@ -59,7 +59,7 @@ public class GameBoardStage {
 			this.gc.drawImage( this.bg, 0, 0); // background of the GridPane
 	
 			this.initGameBoard();
-			// this.createMap();
+			this.createMap();
 	
 			//set stage elements here
 			this.root.getChildren().add(this.canvas);
@@ -112,19 +112,19 @@ public class GameBoardStage {
 					}
 
 					else if(check == 71 || check == 76){
-						gameBoard[i][j] = Element.W_KNIGHT_TYPE; // White Rook
+						gameBoard[i][j] = Element.W_KNIGHT_TYPE; // White Knight
 					}
 
 					else if(check == 72 || check == 75){
-						gameBoard[i][j] = Element.W_BISHOP_TYPE; // White Rook
+						gameBoard[i][j] = Element.W_BISHOP_TYPE; // White Bishop
 					}
 
 					else if(check == 73){
-						gameBoard[i][j] = Element.W_QUEEN_TYPE; // White Rook
+						gameBoard[i][j] = Element.W_QUEEN_TYPE; // White Queen
 					}
 
 					else if(check == 74){
-						gameBoard[i][j] = Element.W_KING_TYPE; // White Rook
+						gameBoard[i][j] = Element.W_KING_TYPE; // White King
 					}
 
 				}
@@ -133,4 +133,120 @@ public class GameBoardStage {
 				System.out.println(Arrays.toString(this.gameBoard[i]));//print final board content
 			}
 		}
+
+		private void createMap(){ // method to create 8x8 = 64 land cells
+
+			// Instantiate chess elements while also passing the GameBoardStage
+			
+			for(int i=0;i<GameBoardStage.MAP_NUM_ROWS;i++){
+				for(int j=0;j<GameBoardStage.MAP_NUM_COLS;j++){
+	
+					int check = i*10+j;
+					if(check == 0 || check == 7){
+						Element b_rook = new Element(Element.B_ROOK_TYPE, this);
+						this.instantiateChessPiece(b_rook, i, j);
+					}
+						
+					else if(check == 1 || check == 6){
+						Element b_knight = new Element(Element.B_KNIGHT_TYPE, this);
+						this.instantiateChessPiece(b_knight, i, j);
+					}
+
+					else if(check == 2 || check == 5){
+						Element b_bishop = new Element(Element.B_BISHOP_TYPE, this);
+						this.instantiateChessPiece(b_bishop, i, j);
+					}
+
+					else if(check == 3){
+						Element b_queen = new Element(Element.B_QUEEN_TYPE, this);
+						this.instantiateChessPiece(b_queen, i, j);
+					}
+
+					else if(check == 4){
+						Element b_king = new Element(Element.B_KING_TYPE, this);
+						this.instantiateChessPiece(b_king, i, j);
+					}
+
+					else if(check >= 10 && check <= 17){
+						Element b_pawn = new Element(Element.B_PAWN_TYPE,this);
+						this.instantiateChessPiece(b_pawn, i, j);
+					}
+
+					else if(check >= 20 && check <= 57){
+						Element cleared = new Element(Element.CLEARED_TYPE, this);
+						this.instantiateChessPiece(cleared, i, j);
+					}
+
+					else if(check >= 60 && check <= 67){
+						Element w_pawn = new Element(Element.W_PAWN_TYPE,this);
+						this.instantiateChessPiece(w_pawn, i, j);
+					}
+
+					else if(check == 70 || check == 77){
+						Element w_rook = new Element(Element.W_ROOK_TYPE, this);
+						this.instantiateChessPiece(w_rook, i, j);
+					}
+
+					else if(check == 71 || check == 76){
+						Element w_knight = new Element(Element.W_KNIGHT_TYPE, this);
+						this.instantiateChessPiece(w_knight, i, j);
+					}
+
+					else if(check == 72 || check == 75){
+						Element w_bishop = new Element(Element.W_BISHOP_TYPE, this);
+						this.instantiateChessPiece(w_bishop, i, j);
+					}
+
+					else if(check == 73){
+						Element w_queen = new Element(Element.W_QUEEN_TYPE, this);
+						this.instantiateChessPiece(w_queen, i, j);
+					}
+
+					else if(check == 74){
+						Element w_king = new Element(Element.W_KING_TYPE, this);
+						this.instantiateChessPiece(w_king, i, j);
+					}
+
+				}
+			}
+	
+			this.setGridPaneProperties();
+			this.setGridPaneContents();
+		}
+
+	// method to set the initial chess piece coordinates on the board
+	private void instantiateChessPiece(Element piece, int i, int j){
+		piece.initRowCol(i, j);
+		this.pieceCells.add(piece);
+	}
+
+	// method to set size and location of the grid pane
+	private void setGridPaneProperties(){
+		this.map.setPrefSize(GameBoardStage.MAP_WIDTH, GameBoardStage.MAP_HEIGHT);
+		//set the map to x and y location; add border color to see the size of the gridpane/map
+//	    this.map.setStyle("-fx-border-color: red ;");
+		this.map.setLayoutX(GameBoardStage.WINDOW_WIDTH*0.010);
+	    this.map.setLayoutY(GameBoardStage.WINDOW_WIDTH*0.013);
+	    this.map.setVgap(8.3);
+	    this.map.setHgap(15);
+	}
+
+	// method to add row and column constraints of the grid pane
+	private void setGridPaneContents(){
+
+		 //loop that will set the constraints of the elements in the grid pane
+	     int counter=0;
+	     for(int row=0;row<GameBoardStage.MAP_NUM_ROWS;row++){
+	    	 for(int col=0;col<GameBoardStage.MAP_NUM_COLS;col++){
+	    		 // map each land's constraints
+	    		 GridPane.setConstraints(pieceCells.get(counter).getImageView(),col,row);
+	    		 counter++;
+	    	 }
+	     }
+
+	   //loop to add each land element to the gridpane/map
+	     for(Element piece: pieceCells){
+	    	 this.map.getChildren().add(piece.getImageView());
+	     }
+	}
 }
