@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -69,10 +72,12 @@ public class Element {
             case Element.W_KNIGHT_TYPE: this.img = Element.W_KNIGHT_IMAGE; break;
             case Element.W_PAWN_TYPE: this.img = Element.W_PAWN_IMAGE; break;
 
+			case Element.CLEARED_TYPE: this.img = Element.NULL_IMAGE; break;
+
 		}
 
 		this.setImageView();
-		// this.setMouseHandler();
+		this.setMouseHandler();
 	}
 
     protected void loadImage(String filename,int width, int height){
@@ -84,6 +89,10 @@ public class Element {
 
 	String getType(){
 		return this.type;
+	}
+
+	Image getImage(){
+		return this.img;
 	}
 
 	int getRow() {
@@ -120,57 +129,56 @@ public class Element {
         this.imgView.setFitHeight(GameBoardStage.CELL_HEIGHT);
 	}
 
-	// private void setMouseHandler(){
-	// 	Element element = this; // Notice that no parameters, but we still got the element
-	// 	this.imgView.setOnMouseClicked(new EventHandler<MouseEvent>(){ //Notice that the ImageView element is the one that interacts
-	// 		public void handle(MouseEvent e) {
-    //             switch(element.getType()) {
-	//                 case Element.FLAG_TYPE: 		// if flag, set flagClicked to true
-	// 							                	System.out.println("FLAG clicked!");
-	// 							    	            gameStage.setFlagClicked(true);
-	// 							    	            break;
-	//                 case Element.FLAG_OFF_TYPE: 	// if flagOff, set flagClicked back to false
-	//                 								System.out.println("FLAG OFF clicked!");
-	//                 								gameStage.setFlagClicked(false);
-	//                 								break;
-	//     			case Element.LAND_TYPE:	// Check if the Flag is toggled for that land
-	// 		    									System.out.println("LAND clicked!");
-	// 							    				if(!gameStage.isFlagClicked()) {
-	// 							    					if(!gameStage.isBomb(element)){	// if not a bomb, clear image
-	// 							    						int bombCount = gameStage.checkBombs(element);
-	// 							    						setImage(element, bombCount);
-	// 							    						element.setType(CLEARED_TYPE);
-	// 							    						gameStage.setSafeCells(element); // save the cleared cell's index to an array
-	// 							    						// also check if the number of safe cells has been reached already
-	// 								    					if(GameStage.safeCells.size() == GameStage.MAX_SAFE_CELLS) gameStage.setGameOver(1);
-	// 							    					}
-	// 							    					else {
-	// 							    						changeImage(element,Element.BOMB_IMAGE); // if bomb, change image to bomb
-	// 							    						gameStage.setGameOver(0);
-	// 							    					}
-	// 							    	            } else {
-	// 							    	            	changeImage(element,Element.FLAG_IMAGE);	// if flag was clicked before hand, change image to flag
-	// 							    	            	element.setType(LAND_FLAG_TYPE);			// change type to landToFlag
-	// 							    	            	//gameStage.setFlagClicked(false);	    	// reset flagClicked to false
-	// 							    	            	gameStage.checkFlags(element);
-	// 							    	            }
-	// 							    				break;
-	//     			case Element.LAND_FLAG_TYPE:
-	// 							    				changeImage(element,Element.LAND_IMAGE);		// if flag is clicked, change image back to land
-	// 						    	            	element.setType(LAND_TYPE);
-	// 						    	            	gameStage.unCheckFlags(element);				// decrement flagCells if the cell returns back to land
-	// 						    	            	break;
-	//     			case Element.CLEARED_TYPE:
-	//     											// do nothing if cell was cleared
-	//     											break;
-    //             }
-	// 		}	//end of handle()
-	// 	});
-	// }
+	private void setMouseHandler(){
+		Element element = this; // Notice that no parameters, but we still got the element
+		this.imgView.setOnMouseClicked(new EventHandler<MouseEvent>(){ //Notice that the ImageView element is the one that interacts
+			public void handle(MouseEvent e) {
 
-	private void clearImage(Element element) {
-		imgView.setImage(null);
+				// The chess notation can be retrieved for easier reading
+				HashMap<Integer, String> chessNotation = gameStage.getChessNotation();
+				int coordinate = element.getRow() * 10 + element.getCol(); // This is the map coordinate of the piece from the GridPane that has been clicked by the player
+
+				// Prints out the clicked piece or tile + coordinates
+				System.out.print("Player clicked:" + chessNotation.get(coordinate));
+				System.out.println(" --- Type:"+ element.getType());
+
+				if(gameStage.getHasActive()){ // If there is an active piece or tile, set the next movement for the piece
+					// Need to update the following: gameBoard, the previous piece, and the next piece tile
+					// The current element being clicked is the target tile
+
+					element.setType(gameStage.getActiveCell().getType());
+					changeImage(element, gameStage.getActiveCell().getImage());
+					gameStage.setGameBoardPiece(gameStage.getActiveCell(), element);
+					
+					// Clearing the active piece
+					Element cleared = new Element(Element.CLEARED_TYPE, gameStage);
+					gameStage.setActiveCell(cleared);
+					gameStage.setHasActive(false);
+					System.out.println(gameStage.getActiveCell().getType());
+					System.out.println(gameStage.getHasActive());
+				}
+				else { // If there's no active piece, set the active piece
+					Element newActive = new Element(element.getType(), element.gameStage);
+					newActive.initRowCol(element.getRow(), element.getCol());
+
+					gameStage.setActiveCell(newActive);
+					gameStage.setHasActive(true);
+					System.out.println("Active piece: " + gameStage.getActiveCell().getType());
+					System.out.println("Is piece active: " + gameStage.getHasActive());
+				
+
+					element.setType(Element.CLEARED_TYPE);
+					changeImage(element, Element.NULL_IMAGE);
+				}
+
+				gameStage.printGameBoard();
+			}	//end of handle()
+		});
 	}
+
+	// private void clearImage(Element element) {
+	// 	imgView.setImage(null);
+	// }
 
 	private void changeImage(Element element, Image image) {
 		this.imgView.setImage(image);

@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class GameBoardStage {
 	private Scene scene;
@@ -21,6 +22,9 @@ public class GameBoardStage {
 	private GridPane map;
 	private String[][] gameBoard;
 	private ArrayList<Element> pieceCells;
+	private Element activeCell;
+	private Boolean hasActive;
+	private HashMap<Integer, String> chessNotation;
 
 	// GUI and GridPane Size Specifications
     public final static int MAX_CELLS = 64;
@@ -30,13 +34,13 @@ public class GameBoardStage {
 	public final static int MAP_HEIGHT = 700;
 	public final static int CELL_WIDTH = 60;
 	public final static int CELL_HEIGHT = 70;
-    public final static int WINDOW_WIDTH = 600;
-	public final static int WINDOW_HEIGHT = 600;
+    public final static int WINDOW_WIDTH = 605;
+	public final static int WINDOW_HEIGHT = 550;
 
     public final Image bg = new Image( // Background image
 	"images/board.png",
-	600,
-	600,
+	605,
+	550,
 	false,
 	false);
 
@@ -50,12 +54,46 @@ public class GameBoardStage {
 		this.map = new GridPane(); // Main layout for the game
 		this.pieceCells = new ArrayList<Element>(); //List to hold the pattern of the Grid Pane
 		this.gameBoard = new String[GameBoardStage.MAP_NUM_ROWS][GameBoardStage.MAP_NUM_COLS];
+
+		this.hasActive = false;
+		this.initChessNotation();
 	}
 
-		//method to add the stage elements
+		// getter method for hasActive attribute
+		Boolean getHasActive(){
+			return this.hasActive;
+		}
+
+		// getter method for activeCell attribute
+		Element getActiveCell(){
+			return this.activeCell;
+		}
+
+		// getter method for pieceCells attribute
+		ArrayList<Element> getPieceCells(){
+			return this.pieceCells;
+		}
+
+		// getter method for chessNotation attribute
+		HashMap<Integer, String> getChessNotation(){
+			return this.chessNotation;
+		}
+
+
+		// setter method for hasActive attribute
+		void setHasActive(Boolean bool){
+			this.hasActive = bool;
+		}
+
+		// setter method for activeCell attribute
+		void setActiveCell(Element active){
+			this.activeCell = active;
+		}
+
+		// method to add the stage elements
 		public void setStage(Stage stage) {
 			this.stage = stage;
-			//draw the background to the canvas at location x=0, y=90
+			//draw the background to the canvas at location x=0, y=0
 			this.gc.drawImage( this.bg, 0, 0); // background of the GridPane
 	
 			this.initGameBoard();
@@ -68,6 +106,13 @@ public class GameBoardStage {
 			this.stage.setTitle("Chess");
 			this.stage.setScene(this.scene);
 			this.stage.show();
+		}
+
+		// method to print the gameboard
+		void printGameBoard(){
+			for(int i=0;i<GameBoardStage.MAP_NUM_ROWS;i++){
+				System.out.println(Arrays.toString(this.gameBoard[i])); //print final board content
+			}
 		}
 
 		// method to initialize game board
@@ -129,9 +174,7 @@ public class GameBoardStage {
 
 				}
 			}
-			for(int i=0;i<GameBoardStage.MAP_NUM_ROWS;i++){
-				System.out.println(Arrays.toString(this.gameBoard[i]));//print final board content
-			}
+			this.printGameBoard();
 		}
 
 		private void createMap(){ // method to create 8x8 = 64 land cells
@@ -206,7 +249,6 @@ public class GameBoardStage {
 						Element w_king = new Element(Element.W_KING_TYPE, this);
 						this.instantiateChessPiece(w_king, i, j);
 					}
-
 				}
 			}
 	
@@ -225,7 +267,7 @@ public class GameBoardStage {
 		this.map.setPrefSize(GameBoardStage.MAP_WIDTH, GameBoardStage.MAP_HEIGHT);
 		//set the map to x and y location; add border color to see the size of the gridpane/map
 //	    this.map.setStyle("-fx-border-color: red ;");
-		this.map.setLayoutX(GameBoardStage.WINDOW_WIDTH*0.010);
+		this.map.setLayoutX(GameBoardStage.WINDOW_WIDTH*0.0175);
 	    this.map.setLayoutY(GameBoardStage.WINDOW_WIDTH*0.013);
 	    this.map.setVgap(8.3);
 	    this.map.setHgap(15);
@@ -248,5 +290,103 @@ public class GameBoardStage {
 	     for(Element piece: pieceCells){
 	    	 this.map.getChildren().add(piece.getImageView());
 	     }
+	}
+
+	// method to initialize the chess notations based on map coordinates
+	private void initChessNotation(){
+		this.chessNotation = new HashMap<Integer, String>();
+
+		this.chessNotation.put(0, "A8");
+		this.chessNotation.put(1, "B8");
+		this.chessNotation.put(2, "C8");
+		this.chessNotation.put(3, "D8");
+		this.chessNotation.put(4, "E8");
+		this.chessNotation.put(5, "F8");
+		this.chessNotation.put(6, "G8");
+		this.chessNotation.put(7, "H8");
+
+		this.chessNotation.put(10, "A7");
+		this.chessNotation.put(11, "B7");
+		this.chessNotation.put(12, "C7");
+		this.chessNotation.put(13, "D7");
+		this.chessNotation.put(14, "E7");
+		this.chessNotation.put(15, "F7");
+		this.chessNotation.put(16, "G7");
+		this.chessNotation.put(17, "H7");
+
+		this.chessNotation.put(20, "A6");
+		this.chessNotation.put(21, "B6");
+		this.chessNotation.put(22, "C6");
+		this.chessNotation.put(23, "D6");
+		this.chessNotation.put(24, "E6");
+		this.chessNotation.put(25, "F6");
+		this.chessNotation.put(26, "G6");
+		this.chessNotation.put(27, "H6");
+		
+		this.chessNotation.put(30, "A5");
+		this.chessNotation.put(31, "B5");
+		this.chessNotation.put(32, "C5");
+		this.chessNotation.put(33, "D5");
+		this.chessNotation.put(34, "E5");
+		this.chessNotation.put(35, "F5");
+		this.chessNotation.put(36, "G5");
+		this.chessNotation.put(37, "H5");
+
+		this.chessNotation.put(40, "A4");
+		this.chessNotation.put(41, "B4");
+		this.chessNotation.put(42, "C4");
+		this.chessNotation.put(43, "D4");
+		this.chessNotation.put(44, "E4");
+		this.chessNotation.put(45, "F4");
+		this.chessNotation.put(46, "G4");
+		this.chessNotation.put(47, "H4");
+
+		this.chessNotation.put(50, "A3");
+		this.chessNotation.put(51, "B3");
+		this.chessNotation.put(52, "C3");
+		this.chessNotation.put(53, "D3");
+		this.chessNotation.put(54, "E3");
+		this.chessNotation.put(55, "F3");
+		this.chessNotation.put(56, "G3");
+		this.chessNotation.put(57, "H3");
+
+		this.chessNotation.put(60, "A2");
+		this.chessNotation.put(61, "B2");
+		this.chessNotation.put(62, "C2");
+		this.chessNotation.put(63, "D2");
+		this.chessNotation.put(64, "E2");
+		this.chessNotation.put(65, "F2");
+		this.chessNotation.put(66, "G2");
+		this.chessNotation.put(67, "H2");
+
+		this.chessNotation.put(70, "A1");
+		this.chessNotation.put(71, "B1");
+		this.chessNotation.put(72, "C1");
+		this.chessNotation.put(73, "D1");
+		this.chessNotation.put(74, "E1");
+		this.chessNotation.put(75, "F1");
+		this.chessNotation.put(76, "G1");
+		this.chessNotation.put(77, "H1");
+	}
+
+	void setGameBoardPiece(Element prev, Element next){
+		int activeCoords = prev.getRow() * 10 + prev.getCol();
+		int nextCoords = next.getRow() * 10 + next.getCol();
+
+		for(int row=0;row<GameBoardStage.MAP_NUM_ROWS;row++){
+			for(int col=0;col<GameBoardStage.MAP_NUM_COLS;col++){
+				int check = row*10+col;
+				// Updating the previous tile coordinate
+				if(check == activeCoords){
+					this.gameBoard[row][col] = Element.CLEARED_TYPE;
+				}
+
+				// Updating the next tile with new coordinate name
+				if(check == nextCoords){
+					this.gameBoard[row][col] = next.getType();
+				}
+
+			}
+		}
 	}
 }
