@@ -369,19 +369,27 @@ public class GameBoardStage {
 		this.chessNotation.put(77, "H1");
 	}
 
+	// method to update gameboard piece placements
 	void setGameBoardPiece(Element prev, Element next){
+		// 'prev' pertains to the active piece clicked earlier by the player
+		// 'next' pertains to the piece being clicked by the player
+
+		// 'prev' coordinates
 		int activeCoords = prev.getRow() * 10 + prev.getCol();
+		// 'next' coordinates
 		int nextCoords = next.getRow() * 10 + next.getCol();
 
 		for(int row=0;row<GameBoardStage.MAP_NUM_ROWS;row++){
 			for(int col=0;col<GameBoardStage.MAP_NUM_COLS;col++){
+				// coordinates are checked using this formula
 				int check = row*10+col;
+
 				// Updating the previous tile coordinate
 				if(check == activeCoords){
 					this.gameBoard[row][col] = Element.CLEARED_TYPE;
 				}
 
-				// Updating the next tile with new coordinate name
+				// Updating the next tile with the active piece type
 				if(check == nextCoords){
 					this.gameBoard[row][col] = next.getType();
 				}

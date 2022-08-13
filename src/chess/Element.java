@@ -144,33 +144,45 @@ public class Element {
 
 				if(gameStage.getHasActive()){ // If there is an active piece or tile, set the next movement for the piece
 					// Need to update the following: gameBoard, the previous piece, and the next piece tile
-					// The current element being clicked is the target tile
 
+
+					// The current element being clicked is the target tile
+					// The target tile/piece's type and image should be changed according to the active piece's attributes 
 					element.setType(gameStage.getActiveCell().getType());
 					changeImage(element, gameStage.getActiveCell().getImage());
+
+					// Updating the gameboard coordinates status
 					gameStage.setGameBoardPiece(gameStage.getActiveCell(), element);
-					
+
 					// Clearing the active piece
 					Element cleared = new Element(Element.CLEARED_TYPE, gameStage);
+
+					// Setting the new active piece to a cleared type and setting the gamestage's hasActive back to false
 					gameStage.setActiveCell(cleared);
 					gameStage.setHasActive(false);
-					System.out.println(gameStage.getActiveCell().getType());
-					System.out.println(gameStage.getHasActive());
+
+					// Printing the active piece type and see if there is an active piece
+					System.out.println("Active piece: " + gameStage.getActiveCell().getType());
+					System.out.println("Is piece active: " + gameStage.getHasActive());
 				}
 				else { // If there's no active piece, set the active piece
+
+					// Copying the type and gamestage of the clicked piece and declaring a new piece
 					Element newActive = new Element(element.getType(), element.gameStage);
 					newActive.initRowCol(element.getRow(), element.getCol());
 
+					// Setting the new active piece and setting the gamestage's hasActive to true
 					gameStage.setActiveCell(newActive);
 					gameStage.setHasActive(true);
+
+					// Printing the active piece type and see if there is an active piece
 					System.out.println("Active piece: " + gameStage.getActiveCell().getType());
 					System.out.println("Is piece active: " + gameStage.getHasActive());
-				
 
 					element.setType(Element.CLEARED_TYPE);
 					changeImage(element, Element.NULL_IMAGE);
 				}
-
+				// printing the gameboard after every mouse click
 				gameStage.printGameBoard();
 			}	//end of handle()
 		});
