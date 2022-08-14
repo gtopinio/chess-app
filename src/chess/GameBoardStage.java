@@ -26,6 +26,11 @@ public class GameBoardStage {
 	private Boolean hasActive;
 	private HashMap<Integer, String> chessNotation;
 
+	// Turn-Based System Attribute
+	private int player_turn;
+	// public final static String PLAYER_ONE = "P1";
+	// public final static String PLAYER_TWO = "P2";
+
 	// GUI and GridPane Size Specifications
     public final static int MAX_CELLS = 64;
 	public final static int MAP_NUM_ROWS = 8;
@@ -57,6 +62,7 @@ public class GameBoardStage {
 
 		this.hasActive = false;
 		this.initChessNotation();
+		this.player_turn = 0;
 	}
 
 		// getter method for hasActive attribute
@@ -79,6 +85,11 @@ public class GameBoardStage {
 			return this.chessNotation;
 		}
 
+		// getter method for player_turn attribute
+		int getPlayerTurn(){
+			return this.player_turn;
+		}
+
 
 		// setter method for hasActive attribute
 		void setHasActive(Boolean bool){
@@ -88,6 +99,11 @@ public class GameBoardStage {
 		// setter method for activeCell attribute
 		void setActiveCell(Element active){
 			this.activeCell = active;
+		}
+
+		// increment setter for player_turn
+		void incrementTurn(){
+			this.player_turn++;
 		}
 
 		// method to add the stage elements
