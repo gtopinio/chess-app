@@ -7,6 +7,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,8 +31,9 @@ public class GameBoardStage {
 
 	// Turn-Based System Attribute
 	private int player_turn;
-	// public final static String PLAYER_ONE = "P1";
-	// public final static String PLAYER_TWO = "P2";
+
+	// Menubar Components
+	private Rectangle color_turn;
 
 	// GUI and GridPane Size Specifications
     public final static int MAX_CELLS = 64;
@@ -40,7 +44,7 @@ public class GameBoardStage {
 	public final static int CELL_WIDTH = 60;
 	public final static int CELL_HEIGHT = 70;
     public final static int WINDOW_WIDTH = 605;
-	public final static int WINDOW_HEIGHT = 550;
+	public final static int WINDOW_HEIGHT = 650;
 
     public final Image bg = new Image( // Background image
 	"images/board.png",
@@ -52,7 +56,7 @@ public class GameBoardStage {
 	// Constructor
 	public GameBoardStage() {
 		this.root = new Group();
-		this.scene = new Scene(root, GameBoardStage.WINDOW_WIDTH,GameBoardStage.WINDOW_HEIGHT, Color.ANTIQUEWHITE);
+		this.scene = new Scene(root, GameBoardStage.WINDOW_WIDTH,GameBoardStage.WINDOW_HEIGHT, Color.AQUAMARINE);
 		this.canvas = new Canvas(GameBoardStage.WINDOW_WIDTH,GameBoardStage.WINDOW_HEIGHT);
 		this.gc = canvas.getGraphicsContext2D();
 
@@ -63,6 +67,9 @@ public class GameBoardStage {
 		this.hasActive = false;
 		this.initChessNotation();
 		this.player_turn = 0;
+		// Initializing the active piece
+		Element cleared = new Element(Element.CLEARED_TYPE, this);
+		this.setActiveCell(cleared);
 	}
 
 		// getter method for hasActive attribute
@@ -106,18 +113,64 @@ public class GameBoardStage {
 			this.player_turn++;
 		}
 
+		// updating the color turn from the menubar. It should only update once the active piece is cleared
+		void updateColorTurn(int player_turn){
+			if(player_turn % 2 == 1 && getHasActive() == false){
+				this.color_turn.setFill(Color.BLACK);
+			}
+			else if(player_turn % 2 == 0 && getHasActive() == false){
+				this.color_turn.setFill(Color.WHITE);
+			}
+		}
+
+		// updating what active piece to show on the menubar
+		void showActive(){
+			if(getHasActive()){
+				this.gc.drawImage(this.getActiveCell().getImage(), 475, 20);
+			}
+		}
+
+		// clearing the active piece if the active piece type is cleared
+		void clearActive(){
+			if(!getHasActive()){
+				this.gc.setFill(Color.AQUAMARINE);
+				this.gc.fillRect(475, 20, CELL_WIDTH, CELL_HEIGHT);
+			}
+		}
+
 		// method to add the stage elements
 		public void setStage(Stage stage) {
 			this.stage = stage;
-			//draw the background to the canvas at location x=0, y=0
-			this.gc.drawImage( this.bg, 0, 0); // background of the GridPane
+			// draw the background to the canvas at location x=0, y=0
+			this.gc.drawImage( this.bg, 0, 100); // background of the GridPane
 	
 			this.initGameBoard();
 			this.createMap();
-	
-			//set stage elements here
+			
+			// setting the menubar components
+			// menubar components should show the color turn and the active piece
+
+			Font menuBarFont = Font.font("Trebuchet	MS", FontWeight.BOLD, 30); // font for the menubar components
+			this.gc.setFont(menuBarFont);
+			this.gc.setFill(Color.BLACK); // font color for the menubar
+			this.gc.fillText("TURN:", 25, 55); // "TURN" text for player turn
+			this.gc.fillText("ACTIVE:", 350, 55); // "ACTIVE" text to know the active piece
+			this.clearActive();
+
+			// Rectangle set on the menubar to know the color turn (needs a setter for each piece move update)
+			this.color_turn = new Rectangle();
+			this.color_turn.setStroke(Color.BLACK);
+			this.color_turn.setFill(Color.WHITE);
+			this.color_turn.setWidth(GameBoardStage.CELL_WIDTH);
+			this.color_turn.setHeight(GameBoardStage.CELL_WIDTH);
+			this.color_turn.setX(130);
+			this.color_turn.setY(20);
+
+
+			// set stage elements here
 			this.root.getChildren().add(this.canvas);
 			this.root.getChildren().add(this.map);
+			this.root.getChildren().add(this.color_turn);
 
 			this.stage.setTitle("Chess");
 			this.stage.setScene(this.scene);
@@ -127,7 +180,7 @@ public class GameBoardStage {
 		// method to print the gameboard
 		void printGameBoard(){
 			for(int i=0;i<GameBoardStage.MAP_NUM_ROWS;i++){
-				System.out.println(Arrays.toString(this.gameBoard[i])); //print final board content
+				System.out.println(Arrays.toString(this.gameBoard[i])); // print final board content
 			}
 		}
 
@@ -284,7 +337,7 @@ public class GameBoardStage {
 		//set the map to x and y location; add border color to see the size of the gridpane/map
 //	    this.map.setStyle("-fx-border-color: red ;");
 		this.map.setLayoutX(GameBoardStage.WINDOW_WIDTH*0.0175);
-	    this.map.setLayoutY(GameBoardStage.WINDOW_WIDTH*0.013);
+	    this.map.setLayoutY(GameBoardStage.WINDOW_WIDTH*0.013+100);
 	    this.map.setVgap(8.3);
 	    this.map.setHgap(15);
 	}

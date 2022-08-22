@@ -158,7 +158,7 @@ public class Element {
 				System.out.println(" --- Type:"+ element.getType());
 
 				if(gameStage.getHasActive()){ // If there is an active piece or tile, set the next movement for the piece
-					if(element.getType() == Element.CLEARED_TYPE){
+					if(element.getType() == Element.CLEARED_TYPE){ // must place active piece only on cleared types
 						// Need to update the following: gameBoard, the previous piece, and the next piece tile
 						// The current element being clicked is the target tile
 						// The target tile/piece's type and image should be changed according to the active piece's attributes 
@@ -174,6 +174,7 @@ public class Element {
 						// Setting the new active piece to a cleared type and setting the gamestage's hasActive back to false
 						gameStage.setActiveCell(cleared);
 						gameStage.setHasActive(false);
+						gameStage.clearActive();
 
 						// Printing the active piece type and see if there is an active piece
 						System.out.println("Active piece: " + gameStage.getActiveCell().getType());
@@ -237,13 +238,13 @@ public class Element {
 
 						gameStage.incrementTurn();
 					}
-
-
-
-
+					gameStage.showActive();
 				}
 				// printing the gameboard after every mouse click
 				gameStage.printGameBoard();
+
+				// updating menubar contents
+				gameStage.updateColorTurn(gameStage.getPlayerTurn());
 			}	//end of handle()
 		});
 	}
