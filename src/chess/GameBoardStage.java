@@ -72,6 +72,11 @@ public class GameBoardStage {
 		this.setActiveCell(cleared);
 	}
 
+		// getter method for gameboard
+		String[][] getGameBoard(){
+			return this.gameBoard;
+		}
+
 		// getter method for hasActive attribute
 		Boolean getHasActive(){
 			return this.hasActive;

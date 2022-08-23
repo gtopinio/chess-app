@@ -59,6 +59,7 @@ public class Element {
 
 	public final static String WHITE_COLOR = "WHITE";
 	public final static String BLACK_COLOR = "BLACK";
+	public final static String NULL_COLOR = "NULL";
 
 	// public final static String UP_DIRECTION = "UP";
 	// public final static String DOWN_DIRECTION = "DOWN";
@@ -83,7 +84,7 @@ public class Element {
             case Element.W_KNIGHT_TYPE: this.img = Element.W_KNIGHT_IMAGE; this.color = Element.WHITE_COLOR; break;
             case Element.W_PAWN_TYPE: this.img = Element.W_PAWN_IMAGE; this.color = Element.WHITE_COLOR; break;
 
-			case Element.CLEARED_TYPE: this.img = Element.NULL_IMAGE; break;
+			case Element.CLEARED_TYPE: this.img = Element.NULL_IMAGE; this.color = Element.NULL_COLOR; break;
 
 		}
 
@@ -127,6 +128,10 @@ public class Element {
 		this.type = type;
 	}
 
+	void setColor(String color){
+		this.color = color;
+	}
+
 	void initRowCol(int i, int j) {
 		this.row = i;
 		this.col = j;
@@ -154,16 +159,20 @@ public class Element {
 				int coordinate = element.getRow() * 10 + element.getCol(); // This is the map coordinate of the piece from the GridPane that has been clicked by the player
 
 				// Prints out the clicked piece or tile + coordinates
-				System.out.print("Player clicked:" + chessNotation.get(coordinate));
-				System.out.println(" --- Type:"+ element.getType());
+				System.out.println("========== STATUS ==========");
+				System.out.println("Player clicked: " + chessNotation.get(coordinate));
+				System.out.println("Type: " + element.getType());
+				System.out.println("Color: " + element.getColor());
+				System.out.println("============================");
 
 				if(gameStage.getHasActive()){ // If there is an active piece or tile, set the next movement for the piece
-					if(element.getType() == Element.CLEARED_TYPE){ // must place active piece only on cleared types
+					if(validPlacement(element)){
 						// Need to update the following: gameBoard, the previous piece, and the next piece tile
 						// The current element being clicked is the target tile
-						// The target tile/piece's type and image should be changed according to the active piece's attributes 
+						// The target tile/piece's type, image, and color should be changed according to the active piece's attributes 
 						element.setType(gameStage.getActiveCell().getType());
 						changeImage(element, gameStage.getActiveCell().getImage());
+						element.setColor(gameStage.getActiveCell().getColor());
 
 						// Updating the gameboard coordinates status
 						gameStage.setGameBoardPiece(gameStage.getActiveCell(), element);
@@ -187,7 +196,7 @@ public class Element {
 					if(gameStage.getPlayerTurn() % 2 == 0 && element.getColor() == Element.WHITE_COLOR){
 
 						if(element.getType() == Element.CLEARED_TYPE){
-							// If the piece being clicked, there should be no active piece yet
+							// If the piece being clicked is a cleared type, there should be no active piece yet
 							gameStage.setHasActive(false);
 						}
 						else {
@@ -206,6 +215,7 @@ public class Element {
 							// Changing the piece type to a cleared type and changing the image to null
 							element.setType(Element.CLEARED_TYPE);
 							changeImage(element, Element.NULL_IMAGE);
+							element.setColor(Element.NULL_COLOR);
 						}
 
 						gameStage.incrementTurn();
@@ -215,7 +225,7 @@ public class Element {
 					else if(gameStage.getPlayerTurn() % 2 == 1 && element.getColor() == Element.BLACK_COLOR){
 						
 						if(element.getType() == Element.CLEARED_TYPE){
-							// If the piece being clicked, there should be no active piece yet
+							// If the piece being clicked is a cleared type, there should be no active piece yet
 							gameStage.setHasActive(false);
 						}
 						else {
@@ -234,6 +244,7 @@ public class Element {
 							// Changing the piece type to a cleared type and changing the image to null
 							element.setType(Element.CLEARED_TYPE);
 							changeImage(element, Element.NULL_IMAGE);
+							element.setColor(Element.NULL_COLOR);
 						}
 
 						gameStage.incrementTurn();
@@ -253,8 +264,202 @@ public class Element {
 	// 	imgView.setImage(null);
 	// }
 
+	// method to change image of an Element
 	private void changeImage(Element element, Image image) {
 		this.imgView.setImage(image);
 
+	}
+
+	// method to know if the chess piece placement is valid or not. It returns a boolean value.
+	private boolean validPlacement(Element next){
+		// active piece coordinates
+		int activeCoords = gameStage.getActiveCell().getRow() * 10 + gameStage.getActiveCell().getCol();
+		// next tile/piece coordinates
+		int nextCoords = next.getRow() * 10 + next.getCol();
+		String[][] gameboard = gameStage.getGameBoard();
+		Boolean valid = false;
+
+		switch (gameStage.getActiveCell().getType()) {
+			// valid placements for WHITE PAWN
+			case Element.W_PAWN_TYPE:
+				// possible two-tile placements at initial stage of pawn
+				if((activeCoords >= 60 && activeCoords <= 67) && ((activeCoords - nextCoords) == 10 || (activeCoords - nextCoords) == 20 )){
+					valid = true;
+				}
+				// one forward tile movement for the pawn
+				else if((activeCoords - nextCoords) == 10){
+					valid = true;
+				}
+				// eating movement
+				else if( (activeCoords - nextCoords == 11 || activeCoords - nextCoords == 9) && (next.getColor() == Element.BLACK_COLOR) ){
+					valid = true;
+				}
+				else valid = false;
+				
+				break;
+			
+			// valid placements for BLACK PAWN
+			case Element.B_PAWN_TYPE:
+				// possible two-tile placements at initial stage of pawn
+				if((activeCoords >= 10 && activeCoords <= 17) && ((activeCoords - nextCoords) == -10 || (activeCoords - nextCoords) == -20 )){
+					valid = true;
+				}
+				// one forward tile movement for the pawn
+				else if((activeCoords - nextCoords) == -10){
+					valid = true;
+				}
+				// eating movement
+				else if( (activeCoords - nextCoords == -11 || activeCoords - nextCoords == -9) && (next.getColor() == Element.WHITE_COLOR) ){
+					valid = true;
+				}
+				else valid = false;
+				
+				break;
+			
+			case Element.W_ROOK_TYPE:
+				// horizontal rook movement
+				// need to know if there's a clear horizontal path between the active piece and next piece
+				// first, we need to know if the rook and next tile is on the same horizontal space / row
+				// then, we need to know if there's no SAME COLORED obstacle on that space
+				// lastly, rook placement only works on OPPOSITE COLORS or EMPTY tile
+
+				if(gameStage.getActiveCell().getRow() == next.getRow() && (gameStage.getActiveCell().getColor() != next.getColor())){
+					
+					// to move from the left horizontal space, we need to scan from the left of the active piece
+					if(activeCoords > nextCoords){
+						for(int col = gameStage.getActiveCell().getCol()-1; col >= next.getCol(); col--){
+							// if there's a COLORED obstacle and scanning didn't finish until the next tile's column, it's invalid movement
+							if(gameboard[next.getRow()][col].contains("W") && col != next.getCol() || gameboard[next.getRow()][col].contains("B") && col != next.getCol()){
+								valid = false;
+								break;
+							}
+							else{
+								valid = true;
+							}
+						}
+					}
+
+					// to move from the right horizontal space, we need to scand from the right of the active piece
+					else if(activeCoords < nextCoords){
+						for(int col = gameStage.getActiveCell().getCol()+1; col <= next.getCol(); col++){
+							// if there's a COLORED obstacle and scanning didn't finish until the next tile's column, it's invalid movement
+							if(gameboard[next.getRow()][col].contains("W") && col != next.getCol() || gameboard[next.getRow()][col].contains("B") && col != next.getCol()){
+								valid = false;
+								break;
+							}
+							else{
+								valid = true;
+							}
+						}
+					}
+				}
+
+				// vertical movement of the rook
+				else if(gameStage.getActiveCell().getCol() == next.getCol() && (gameStage.getActiveCell().getColor() != next.getColor())){
+					// to move from the upper vertical space, we need to scan from the upper of the active piece
+					if(activeCoords > nextCoords){
+						for(int row = gameStage.getActiveCell().getRow()-1; row >= next.getRow(); row--){
+							// if there's a COLORED obstacle and scanning didn't finish until the next tile's column, it's invalid movement
+							if(gameboard[row][next.getCol()].contains("W") && row != next.getRow() || gameboard[row][next.getCol()].contains("B") && row != next.getRow()){
+								valid = false;
+								break;
+							}
+							else{
+								valid = true;
+							}
+						}
+					}
+
+					// to move from the lower vertical space, we need to scan from the bottom of the active piece
+					else if(activeCoords < nextCoords){
+						for(int row = gameStage.getActiveCell().getRow()+1; row <= next.getRow(); row++){
+							// if there's a COLORED obstacle and scanning didn't finish until the next tile's column, it's invalid movement
+							if(gameboard[row][next.getCol()].contains("W") && row != next.getRow() || gameboard[row][next.getCol()].contains("B") && row != next.getRow()){
+								valid = false;
+								break;
+							}
+							else{
+								valid = true;
+							}
+						}
+					}
+				}
+
+				else valid = false;
+				break;
+			case Element.B_ROOK_TYPE:
+				// horizontal rook movement
+				// need to know if there's a clear horizontal path between the active piece and next piece
+				// first, we need to know if the rook and next tile is on the same horizontal space / row
+				// then, we need to know if there's no SAME COLORED obstacle on that space
+				// lastly, rook placement only works on OPPOSITE COLORS or EMPTY tile
+				
+
+				if(gameStage.getActiveCell().getRow() == next.getRow() && (gameStage.getActiveCell().getColor() != next.getColor())){
+					
+					// to move from the left horizontal space, we need to scan from the left of the active piece
+					if(activeCoords > nextCoords){
+						for(int col = gameStage.getActiveCell().getCol()-1; col >= next.getCol(); col--){
+							// if there's a COLORED obstacle and scanning didn't finish until the next tile's column, it's invalid movement
+							if(gameboard[next.getRow()][col].contains("W") && col != next.getCol() || gameboard[next.getRow()][col].contains("B") && col != next.getCol()){
+								valid = false;
+								break;
+							}
+							else{
+								valid = true;
+							}
+						}
+					}
+
+					// to move from the right horizontal space, we need to scand from the right of the active piece
+					else if(activeCoords < nextCoords){
+						for(int col = gameStage.getActiveCell().getCol()+1; col <= next.getCol(); col++){
+							// if there's a COLORED obstacle and scanning didn't finish until the next tile's column, it's invalid movement
+							if(gameboard[next.getRow()][col].contains("W") && col != next.getCol() || gameboard[next.getRow()][col].contains("B") && col != next.getCol()){
+								valid = false;
+								break;
+							}
+							else{
+								valid = true;
+							}
+						}
+					}
+				}
+
+				// vertical movement of the rook
+				else if(gameStage.getActiveCell().getCol() == next.getCol() && (gameStage.getActiveCell().getColor() != next.getColor())){
+					// to move from the upper vertical space, we need to scan from the upper of the active piece
+					if(activeCoords > nextCoords){
+						for(int row = gameStage.getActiveCell().getRow()-1; row >= next.getRow(); row--){
+							// if there's a COLORED obstacle and scanning didn't finish until the next tile's column, it's invalid movement
+							if(gameboard[row][next.getCol()].contains("W") && row != next.getRow() || gameboard[row][next.getCol()].contains("B") && row != next.getRow()){
+								valid = false;
+								break;
+							}
+							else{
+								valid = true;
+							}
+						}
+					}
+
+					// to move from the lower vertical space, we need to scan from the bottom of the active piece
+					else if(activeCoords < nextCoords){
+						for(int row = gameStage.getActiveCell().getRow()+1; row <= next.getRow(); row++){
+							// if there's a COLORED obstacle and scanning didn't finish until the next tile's column, it's invalid movement
+							if(gameboard[row][next.getCol()].contains("W") && row != next.getRow() || gameboard[row][next.getCol()].contains("B") && row != next.getRow()){
+								valid = false;
+								break;
+							}
+							else{
+								valid = true;
+							}
+						}
+					}
+				}
+
+				else valid = false;
+				break;
+		}
+		return valid;
 	}
 }
