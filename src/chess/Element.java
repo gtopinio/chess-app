@@ -316,6 +316,7 @@ public class Element {
 				
 				break;
 			
+			// valid placements for WHITE ROOK
 			case Element.W_ROOK_TYPE:
 				// horizontal rook movement
 				// need to know if there's a clear horizontal path between the active piece and next piece
@@ -387,6 +388,8 @@ public class Element {
 
 				else valid = false;
 				break;
+
+			// valid placements for BLACK ROOK
 			case Element.B_ROOK_TYPE:
 				// horizontal rook movement
 				// need to know if there's a clear horizontal path between the active piece and next piece
@@ -457,6 +460,150 @@ public class Element {
 					}
 				}
 
+				else valid = false;
+				break;
+
+			// valid placements for WHITE BISHOP
+			case Element.W_BISHOP_TYPE:
+				if((gameStage.getActiveCell().getColor() != next.getColor())){
+					// left diagonal movement of bishop
+					if((activeCoords - nextCoords) % 11 == 0){
+						// upper portion of diagonal
+						if(activeCoords > nextCoords){
+							for(int col = gameStage.getActiveCell().getCol()-1, row = gameStage.getActiveCell().getRow()-1; col >= next.getCol() && row >= next.getRow(); col--, row--){
+								int testCoord = row*10+col;
+								// see if there are any obstacles (white or black pieces) between the source and destination pieces. Otherwise, it's a valid movement.
+								if((gameboard[row][col].contains("W") && testCoord != nextCoords) || (gameboard[row][col].contains("B") && testCoord != nextCoords)){
+									valid = false;
+									return valid;
+								}
+								else if(testCoord == nextCoords){
+									valid = true;
+									return valid;
+								}
+							}
+						}
+						// lower portion of diagonal
+						else if (activeCoords < nextCoords){
+							for(int col = gameStage.getActiveCell().getCol()+1, row = gameStage.getActiveCell().getRow()+1; col <= next.getCol() && row <= next.getRow(); col++, row++){
+								int testCoord = row*10+col;
+								// see if there are any obstacles (white or black pieces) between the source and destination pieces. Otherwise, it's a valid movement.
+								if((gameboard[row][col].contains("W") && testCoord != nextCoords) || (gameboard[row][col].contains("B") && testCoord != nextCoords)){
+									valid = false;
+									return valid;
+								}
+								else if(testCoord == nextCoords){
+									valid = true;
+									return valid;
+								}
+							}
+						}
+					}
+					// right diagonal movement of bishop
+					else if((activeCoords - nextCoords) % 9 == 0){
+						// upper portion of diagonal
+						if(activeCoords > nextCoords){
+							for(int col = gameStage.getActiveCell().getCol()+1, row = gameStage.getActiveCell().getRow()-1; col <= next.getCol() && row >= next.getRow(); col++, row--){
+								int testCoord = row*10+col;
+								// see if there are any obstacles (white or black pieces) between the source and destination pieces. Otherwise, it's a valid movement.
+								if((gameboard[row][col].contains("W") && testCoord != nextCoords) || (gameboard[row][col].contains("B") && testCoord != nextCoords)){
+									valid = false;
+									return valid;
+								}
+								else if(testCoord == nextCoords){
+									valid = true;
+									return valid;
+								}
+							}
+						}
+						else if (activeCoords < nextCoords){
+							// lower portion of diagonal
+							for(int col = gameStage.getActiveCell().getCol()-1, row = gameStage.getActiveCell().getRow()+1; col >= next.getCol() && row <= next.getRow(); col--, row++){
+								int testCoord = row*10+col;
+								// see if there are any obstacles (white or black pieces) between the source and destination pieces. Otherwise, it's a valid movement.
+								if((gameboard[row][col].contains("W") && testCoord != nextCoords) || (gameboard[row][col].contains("B") && testCoord != nextCoords)){
+									valid = false;
+									return valid;
+								}
+								else if(testCoord == nextCoords){
+									valid = true;
+									return valid;
+								}
+							}
+						}
+					}
+				}
+
+				// valid placements for BLACK BISHOP
+			case Element.B_BISHOP_TYPE:
+			if((gameStage.getActiveCell().getColor() != next.getColor())){
+				// left diagonal movement of bishop
+				if((activeCoords - nextCoords) % 11 == 0){
+					// upper portion of diagonal
+					if(activeCoords > nextCoords){
+						for(int col = gameStage.getActiveCell().getCol()-1, row = gameStage.getActiveCell().getRow()-1; col >= next.getCol() && row >= next.getRow(); col--, row--){
+							int testCoord = row*10+col;
+							// see if there are any obstacles (white or black pieces) between the source and destination pieces. Otherwise, it's a valid movement.
+							if((gameboard[row][col].contains("W") && testCoord != nextCoords) || (gameboard[row][col].contains("B") && testCoord != nextCoords)){
+								valid = false;
+								return valid;
+							}
+							else if(testCoord == nextCoords){
+								valid = true;
+								return valid;
+							}
+						}
+					}
+					// lower portion of diagonal
+					else if (activeCoords < nextCoords){
+						for(int col = gameStage.getActiveCell().getCol()+1, row = gameStage.getActiveCell().getRow()+1; col <= next.getCol() && row <= next.getRow(); col++, row++){
+							int testCoord = row*10+col;
+							// see if there are any obstacles (white or black pieces) between the source and destination pieces. Otherwise, it's a valid movement.
+							if((gameboard[row][col].contains("W") && testCoord != nextCoords) || (gameboard[row][col].contains("B") && testCoord != nextCoords)){
+								valid = false;
+								return valid;
+							}
+							else if(testCoord == nextCoords){
+								valid = true;
+								return valid;
+							}
+						}
+					}
+				}
+				// right diagonal movement of bishop
+				else if((activeCoords - nextCoords) % 9 == 0){
+					// upper portion of diagonal
+					if(activeCoords > nextCoords){
+						for(int col = gameStage.getActiveCell().getCol()+1, row = gameStage.getActiveCell().getRow()-1; col <= next.getCol() && row >= next.getRow(); col++, row--){
+							int testCoord = row*10+col;
+							// see if there are any obstacles (white or black pieces) between the source and destination pieces. Otherwise, it's a valid movement.
+							if((gameboard[row][col].contains("W") && testCoord != nextCoords) || (gameboard[row][col].contains("B") && testCoord != nextCoords)){
+								valid = false;
+								return valid;
+							}
+							else if(testCoord == nextCoords){
+								valid = true;
+								return valid;
+							}
+						}
+					}
+					// lower portion of diagonal
+					else if (activeCoords < nextCoords){
+						for(int col = gameStage.getActiveCell().getCol()-1, row = gameStage.getActiveCell().getRow()+1; col >= next.getCol() && row <= next.getRow(); col--, row++){
+							int testCoord = row*10+col;
+							// see if there are any obstacles (white or black pieces) between the source and destination pieces. Otherwise, it's a valid movement.
+							if((gameboard[row][col].contains("W") && testCoord != nextCoords) || (gameboard[row][col].contains("B") && testCoord != nextCoords)){
+								valid = false;
+								return valid;
+							}
+							else if(testCoord == nextCoords){
+								valid = true;
+								return valid;
+							}
+						}
+					}
+				}
+			}
 				else valid = false;
 				break;
 		}
